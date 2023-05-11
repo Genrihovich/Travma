@@ -1,5 +1,7 @@
 const { Users } = require('../models');
 const { validationResult } = require('express-validator');
+const bcryptjs = require('bcryptjs');
+const validateDecorator = require('../services/validate-decorator')
 
 function create(req, res, nextparams) {
   const errors = validationResult(req);
@@ -19,10 +21,13 @@ function create(req, res, nextparams) {
       } else {
         // если пользователя нет то создать нового пользователя и передаем что выдернем из боди
         const { FIO_User, Posada_User, Password_User, Name_Region } = req.body;
+        const salt = bcryptjs.genSaltSync(10);//соль с 10-ю итерациями
+        console.log('Salt: ', salt);
+        const passwordHash = bcryptjs.hashSync(Password_User, salt)
         return Users.create({
           FIO_User,
           Posada_User,
-          Password_User,
+          Password_User: passwordHash,
           Name_Region,
         });
       }
@@ -35,6 +40,12 @@ function create(req, res, nextparams) {
     });
 }
 
-module.exports = {
+function login () {
+console.log('Login');
+}
+
+
+module.exports = validateDecorator ({
   create,
-};
+  login
+});
