@@ -22,5 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Users',
   });
+
+  Users.login = function(loginUser){
+
+  }
+ // console.log(Users);
   return Users;
 };

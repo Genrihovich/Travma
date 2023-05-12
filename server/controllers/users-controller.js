@@ -1,7 +1,8 @@
 const { Users } = require('../models');
 const { validationResult } = require('express-validator');
 const bcryptjs = require('bcryptjs');
-const validateDecorator = require('../services/validate-decorator')
+const validateDecorator = require('../services/validate-decorator');
+const {createToken}= require('../services/auth-service')
 
 function create(req, res, nextparams) {
   const errors = validationResult(req);
@@ -40,8 +41,15 @@ function create(req, res, nextparams) {
     });
 }
 
-function login () {
-console.log('Login');
+function login (req, res, next) {
+  const loginUser = req.body;
+  Users.login(loginUser).then(createToken).then(token =>{
+    res.json({token});
+    next();
+  }).catch(error =>{
+    res.status(401).json({ error});    
+  })
+//console.log(loginUser);
 }
 
 
